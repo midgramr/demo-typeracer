@@ -1,0 +1,19 @@
+.paragraph {
+  font-size: 24px;
+}
+
+.char {
+  display: inline;
+}
+
+.caret {
+  display: inline;
+  position: absolute;
+  color: yellow;
+  /* height: 2rem; */
+}
+
+.inputBox {
+  margin-top: 16px;
+  font-size: 24px;
+}
