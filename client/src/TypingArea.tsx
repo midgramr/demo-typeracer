@@ -99,6 +99,7 @@ const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
         placeholder='Start typing...'
         onBeforeInput={handleBeforeInput}
         onKeyDown={handleKeyDown}
+        autoFocus
       />
     </>
   );
