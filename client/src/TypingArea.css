@@ -1,16 +1,25 @@
 .paragraph {
   font-size: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  white-space: pre;
 }
 
-.char {
-  display: inline;
+.word {
+  display: flex;
+}
+
+.letter {
+  position: relative;
 }
 
 .caret {
-  display: inline;
   position: absolute;
-  color: yellow;
-  /* height: 2rem; */
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  width: 0.1rem;
+  background: yellow;
 }
 
 .inputBox {

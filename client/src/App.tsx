@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { LoremIpsum } from 'lorem-ipsum'
 import './App.css'
 import TypingArea from './TypingArea';
@@ -14,19 +14,19 @@ const lorem = new LoremIpsum({
   },
 });
 
-function App() {
+const App = () => {
   const [paragraph, setParagraph] = useState(lorem.generateParagraphs(1));
   const [startTime, setStartTime] = useState<number | undefined>(undefined);
 
-  function getElapsed() {
-    return startTime ? Date.now() - startTime : 0;
-  }
+  const getElapsedMs = useCallback(() => (
+    startTime ? (Date.now() - startTime) / 1000 : 0
+  ), [startTime]);
 
   return (
     <>
-      <TypingArea paragraph={paragraph} elapsed={getElapsed} onStart={setStartTime} />
+      <TypingArea paragraph={paragraph} getElapsedSec={getElapsedMs} onStart={setStartTime} />
     </>
   )
-}
+};
 
 export default App
