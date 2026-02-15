@@ -1,16 +1,15 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import Wpm from './Wpm';
-import Letter from './Letter';
 import './TypingArea.css'
 import Word from './Word';
 
 interface TypingProps {
   paragraph: string,
   // Get seconds elapsed since user started typing
-  // TODO: move this to context
   getElapsedSec: () => number,
   // Start stopwatch; called when user starts typing
   onStart: (t: number) => void,
+  onTypedWord: () => void,
 }
 
 interface TypedIndex {
@@ -18,7 +17,7 @@ interface TypedIndex {
   letterIdx: number,
 }
 
-const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
+const TypingArea = memo(({ paragraph, getElapsedSec, onStart, onTypedWord }: TypingProps) => {
   const [typedIdx, setTypedIdx] = useState<TypedIndex>({
     wordIdx: 0,
     letterIdx: 0,
@@ -43,7 +42,7 @@ const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
     const data: string = e.data;
 
     if (!getElapsedSec() &&
-        typedIdx.wordIdx == 0 && typedIdx.letterIdx == 0) {
+      typedIdx.wordIdx == 0 && typedIdx.letterIdx == 0) {
       onStart(Date.now());
     }
 
@@ -51,9 +50,11 @@ const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
     const curLetter = curWord[typedIdx.letterIdx];
 
     if (data === curLetter && typos === 0) {
+      // Finished typing current word
       if (typedIdx.letterIdx === curWord.length - 1) {
         setTypedIdx(i => ({ wordIdx: i.wordIdx + 1, letterIdx: 0 }));
         e.target.value = '';
+        onTypedWord();
       } else {
         setTypedIdx(i => ({ ...i, letterIdx: i.letterIdx + 1 }));
       }
@@ -80,8 +81,7 @@ const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
   };
 
   return (
-    <>
-      <h1>Typeracer</h1>
+    <div className='typingArea'>
       <Wpm lettersTyped={lettersTyped} elapsedSec={elapsedSec} />
       <div className='paragraph'>
         {paragraphWords.map((word, i) => (
@@ -101,8 +101,8 @@ const TypingArea = ({ paragraph, getElapsedSec, onStart }: TypingProps) => {
         onKeyDown={handleKeyDown}
         autoFocus
       />
-    </>
+    </div>
   );
-};
+});
 
 export default TypingArea;

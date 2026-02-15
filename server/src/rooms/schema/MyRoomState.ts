@@ -1,4 +1,4 @@
-import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
+import { MapSchema, Schema, type } from '@colyseus/schema';
 import { LoremIpsum } from 'lorem-ipsum';
 
 const lorem = new LoremIpsum({
@@ -14,11 +14,12 @@ const lorem = new LoremIpsum({
 
 export class Player extends Schema {
   @type('string') name: string;
-  @type('number') rank: number;
+  @type('string') id: string;
   // Index of current word that player is typing
   @type('number') wordIndex = 0;
-  @type('boolean') done = false;
-  @type('number') finishTime: number;
+  @type('boolean') finished = false;
+  // Time in seconds the player spent typing
+  @type('number') typingTime: number;
 }
 
 export class GameState extends Schema {
@@ -27,24 +28,23 @@ export class GameState extends Schema {
   // Game status, either: 'waiting', 'playing', or 'finished'
   @type('string') status = 'waiting';
 
-  @type('string') words = new ArraySchema<string>();
+  @type('string') paragraph: string;
 
-  public addPlayer(sessionId: string, name: string) {
+  paragraphWords: string[];
+
+  addPlayer(sessionId: string, name: string) {
     const player = new Player();
     player.name = name;
+    player.id = sessionId;
     this.players.set(sessionId, player);
   }
 
-  public generateWords() {
-    const paragraph = lorem.generateParagraphs(1);
-    this.words.clear();
-    paragraph.split(' ').forEach(word => this.words.push(word));
+  removePlayer(sessionId: string) {
+    this.players.delete(sessionId);
   }
 
-  public getTypedChars(playerId: string): number {
-    const player = this.players.get(playerId);
-    return this.words.reduce((total, word, idx) => {
-      return total + idx <= player.wordIndex ? word.length : 0;
-    }, 0);
+  generateParagraph() {
+    this.paragraph = lorem.generateParagraphs(1);
+    this.paragraphWords = this.paragraph.split(' ');
   }
 }

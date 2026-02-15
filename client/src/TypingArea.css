@@ -1,3 +1,7 @@
+.typingArea {
+  margin-top: 16px;
+}
+
 .paragraph {
   font-size: 24px;
   display: flex;
